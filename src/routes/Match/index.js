@@ -4,6 +4,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import styled from 'styled-components'
 import Map from './Map/index.js'
+import BattleLog from './BattleLog/index.js'
 import Roster from './Roster/index.js'
 import TimeSlider from './TimeSlider.js'
 import AutoplayControls from './AutoplayControls.js'
@@ -14,6 +15,11 @@ import Telemetry from '../../models/Telemetry.js'
 // Styled Components -----------------------------------------------------------
 // -----------------------------------------------------------------------------
 
+const Wrapper = styled.div`
+    display: grid;
+    overflow: hidden;
+    margin: 0 auto;
+`
 const MatchContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr 170px;
@@ -49,6 +55,7 @@ const RosterHeader = styled.div`
     font-family: 'Palanquin', sans-serif;
     font-size: 1.1rem;
 `
+
 
 class Match extends React.Component {
     state = {
@@ -229,6 +236,9 @@ class Match extends React.Component {
 
         const currentTelemetry = telemetry.stateAt(msSinceEpoch)
 
+        const currentPlayer = currentTelemetry.get('players')
+            .find(p => p.get('name') === 'Dyrem')
+
         const roster = reduce(
             groupBy(currentTelemetry.get('players'), p => p.get('rosterId')),
             (acc, ps, id) => {
@@ -256,30 +266,33 @@ class Match extends React.Component {
         }
 
         return (
-            <MatchContainer id="MatchContainer">
-                <MapContainer id="MapContainer" hoveredRosterId={marks.hoveredRosterId}>
-                    <MatchHeader mapSize={mapSize}>
-                        <MatchInfo match={match} marks={marks} />
-                        <TimeSlider
-                            value={msSinceEpoch}
-                            stopAutoplay={this.stopAutoplay}
-                            onChange={this.onTimeSliderChange}
-                            durationSeconds={match.durationSeconds}
-                        />
-                        <AutoplayControls
-                            autoplay={autoplay}
-                            autoplaySpeed={autoplaySpeed}
-                            toggleAutoplay={this.toggleAutoplay}
-                            changeSpeed={this.changeAutoplaySpeed}
-                        />
-                    </MatchHeader>
-                    <Map match={match} telemetry={currentTelemetry} mapSize={mapSize} marks={marks} />
-                </MapContainer>
-                <RosterContainer mapSize={mapSize}>
-                    <RosterHeader>Name (Kills)</RosterHeader>
-                    <Roster match={match} roster={roster} telemetry={currentTelemetry} marks={marks} />
-                </RosterContainer>
-            </MatchContainer>
+            <Wrapper>
+                <MatchContainer id="MatchContainer">
+                    <MapContainer id="MapContainer" hoveredRosterId={marks.hoveredRosterId}>
+                        <MatchHeader mapSize={mapSize}>
+                            <MatchInfo match={match} marks={marks} />
+                            <TimeSlider
+                                value={msSinceEpoch}
+                                stopAutoplay={this.stopAutoplay}
+                                onChange={this.onTimeSliderChange}
+                                durationSeconds={match.durationSeconds}
+                            />
+                            <AutoplayControls
+                                autoplay={autoplay}
+                                autoplaySpeed={autoplaySpeed}
+                                toggleAutoplay={this.toggleAutoplay}
+                                changeSpeed={this.changeAutoplaySpeed}
+                            />
+                        </MatchHeader>
+                        <Map match={match} telemetry={currentTelemetry} mapSize={mapSize} marks={marks} />
+                    </MapContainer>
+                    <RosterContainer mapSize={mapSize}>
+                        <RosterHeader>Name (Kills)</RosterHeader>
+                        <Roster match={match} roster={roster} telemetry={currentTelemetry} marks={marks} />
+                    </RosterContainer>
+                </MatchContainer>
+                <BattleLog id="BattleLog" telemetry={currentTelemetry} player={currentPlayer} />
+            </Wrapper>
         )
     }
 }

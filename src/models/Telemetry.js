@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { get, clamp } from 'lodash'
-import { Map } from 'immutable'
+import { List, Map } from 'immutable'
 import Participants, { setPlayerStatus, setHealth } from './Participants.js'
 
 function interpolate(lowerVal, upperVal, span, idx) {
@@ -9,7 +9,7 @@ function interpolate(lowerVal, upperVal, span, idx) {
     return lowerVal + (yStep * idx)
 }
 
-const INTERVALS_PER_SECOND = 6
+const INTERVALS_PER_SECOND = 1
 
 export default function Telemetry(matchData, telemetry, focusedPlayerName) {
     const epoch = moment.utc(matchData.playedAt).valueOf()
@@ -21,6 +21,7 @@ export default function Telemetry(matchData, telemetry, focusedPlayerName) {
         safezone: Map({ x: 0, y: 0, radius: 0 }),
         bluezone: Map({ x: 0, y: 0, radius: 0 }),
         redzone: Map({ x: 0, y: 0, radius: 0 }),
+        playerInteractions: List(),
     })
 
     const cache = new Array((matchData.durationSeconds + 10) * INTERVALS_PER_SECOND)
@@ -69,6 +70,11 @@ export default function Telemetry(matchData, telemetry, focusedPlayerName) {
                 const playerPath = ['players', d.victim.name]
                 const player = setHealth(s.getIn(playerPath), d.victim.health - d.damage)
                 s.setIn(playerPath, player)
+                if ((d.attacker.name === focusedPlayerName || d.victim.name === focusedPlayerName)
+                    && d.damage !== 0) {
+                    s.update('playerInteractions', interactions =>
+                        interactions.push(Map({ ...d })))
+                }
             })
         }
         if (d._T === 'LogGameStatePeriodic') {
@@ -83,6 +89,19 @@ export default function Telemetry(matchData, telemetry, focusedPlayerName) {
                 s.set('safezone', Map({ ...gs.poisonGasWarningPosition, radius: gs.poisonGasWarningRadius }))
                 s.set('redzone', Map({ ...gs.redZonePosition, radius: gs.redZoneRadius }))
             })
+        }
+
+        if (d._T === 'LogItemEquip') {
+            if (d.item.subCategory === 'Headgear') {
+                state = state.withMutations(s => {
+                    s.setIn(['players', d.character.name, 'helmet'], d.item.itemId)
+                })
+            }
+            if (d.item.subCategory === 'Vest') {
+                state = state.withMutations(s => {
+                    s.setIn(['players', d.character.name, 'vest'], d.item.itemId)
+                })
+            }
         }
     })
 

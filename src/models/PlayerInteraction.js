@@ -1,41 +1,6 @@
 import { OrderedMap, Map } from 'immutable'
 
-const getColor = (focusType, status) => {
-    if (focusType === 'player') {
-        return status === 'dead' ? '#FF5ABAB0' : '#A4D419B0'
-    }
-
-    if (focusType === 'teammate') {
-        return status === 'dead' ? '#D2252580' : '#18E786B0'
-    }
-
-    return status === 'dead' ? '#D2252580' : '#FFFFFFB0'
-}
-
-const getHealthColor = health => {
-    // More breakpoints?
-    if (health >= 70) {
-        return '#00FF00B0'
-    } else if (health >= 30) {
-        return '#FD6A02B0'
-    }
-    return '#FF0000B0'
-}
-export function setPlayerStatus(player, status) {
-    return player.withMutations(p => {
-        p.set('status', status)
-        p.set('color', getColor(p.get('focusType'), status))
-    })
-}
-export function setHealth(player, health) {
-    return player.withMutations(p => {
-        p.set('health', health)
-        p.set('healthColor', getHealthColor(health))
-    })
-}
-
-export default function Participants(matchData, focusedPlayerName) {
-    const focusedRosterId = matchData.players.find(p => p.name === focusedPlayerName).rosterId
+export default function PlayerInteraction(focusedPlayerName) {
 
     // -- Player ---------------------------------------------------------------
 
