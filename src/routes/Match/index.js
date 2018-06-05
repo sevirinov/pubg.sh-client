@@ -204,36 +204,42 @@ class Match extends React.Component {
                         telemetry={telemetry}
                         msSinceEpoch={msSinceEpoch}
                         render={({ currentTelemetry }) =>
-                            <MatchContainer id="MatchContainer">
-                                <MapContainer id="MapContainer" hoveredRosterId={marks.hoveredRosterId}>
-                                    <MatchHeader mapSize={mapSize}>
-                                        <MatchInfo match={match} marks={marks} />
-                                        <TimeSlider
-                                            value={msSinceEpoch}
-                                            stopAutoplay={timeControls.stopAutoplay}
-                                            onChange={timeControls.setMsSinceEpoch}
-                                            durationSeconds={match.durationSeconds}
+                            <Wrapper>
+                                <MatchContainer id="MatchContainer">
+                                    <MapContainer id="MapContainer" hoveredRosterId={marks.hoveredRosterId}>
+                                        <MatchHeader mapSize={mapSize}>
+                                            <MatchInfo match={match} marks={marks} />
+                                            <TimeSlider
+                                                value={msSinceEpoch}
+                                                stopAutoplay={timeControls.stopAutoplay}
+                                                onChange={timeControls.setMsSinceEpoch}
+                                                durationSeconds={match.durationSeconds}
+                                            />
+                                            <AutoplayControls
+                                                autoplay={timeControls.autoplay}
+                                                autoplaySpeed={timeControls.autoplaySpeed}
+                                                toggleAutoplay={timeControls.toggleAutoplay}
+                                                changeSpeed={timeControls.setAutoplaySpeed}
+                                            />
+                                        </MatchHeader>
+                                        <Map
+                                            match={match}
+                                            telemetry={currentTelemetry}
+                                            mapSize={mapSize}
+                                            marks={marks}
                                         />
-                                        <AutoplayControls
-                                            autoplay={timeControls.autoplay}
-                                            autoplaySpeed={timeControls.autoplaySpeed}
-                                            toggleAutoplay={timeControls.toggleAutoplay}
-                                            changeSpeed={timeControls.setAutoplaySpeed}
-                                        />
-                                    </MatchHeader>
-                                    <Map
-                                        match={match}
-                                        telemetry={currentTelemetry}
-                                        mapSize={mapSize}
-                                        marks={marks}
-                                    />
-                                </MapContainer>
-                                <RosterContainer mapSize={mapSize}>
-                                    <RosterHeader>Name (Kills)</RosterHeader>
-                                    <Roster match={match} telemetry={currentTelemetry} marks={marks} />
-                                </RosterContainer>
-                            </MatchContainer>
-                            <BattleLog id="BattleLog" telemetry={currentTelemetry} player={currentPlayer} />
+                                    </MapContainer>
+                                    <RosterContainer mapSize={mapSize}>
+                                        <RosterHeader>Name (Kills)</RosterHeader>
+                                        <Roster match={match} telemetry={currentTelemetry} marks={marks} />
+                                    </RosterContainer>
+                                </MatchContainer>
+                                <BattleLog
+                                    id="BattleLog"
+                                    telemetry={currentTelemetry}
+                                    player={currentPlayer} 
+                                />
+                            </Wrapper>
                         }
                     />
                 }
