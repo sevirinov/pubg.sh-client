@@ -103,6 +103,30 @@ export default function Telemetry(matchData, telemetry, focusedPlayerName) {
                 })
             }
         }
+        if (d._T === 'LogItemUnequip') {
+            if (d.item.subCategory === 'Headgear') {
+                state = state.withMutations(s => {
+                    s.setIn(['players', d.character.name, 'helmet'], null)
+                })
+            }
+            if (d.item.subCategory === 'Vest') {
+                state = state.withMutations(s => {
+                    s.setIn(['players', d.character.name, 'vest'], null)
+                })
+            }
+        }
+        if (d._T === 'LogArmorDestroy') {
+            if (d.item.subCategory === 'Headgear') {
+                state = state.withMutations(s => {
+                    s.setIn(['players', d.victim.name, 'helmet'], null)
+                })
+            }
+            if (d.item.subCategory === 'Vest') {
+                state = state.withMutations(s => {
+                    s.setIn(['players', d.victim.name, 'vest'], null)
+                })
+            }
+        }
     })
 
     // Sometimes we don't load telemetry until the match duration, ensure that we don't get a cache

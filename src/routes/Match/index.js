@@ -176,9 +176,6 @@ class Match extends React.Component {
         if (!match) return 'Match not found'
         if (!telemetry) return 'Loading telemetry...'
 
-        const currentPlayer = telemetry.finalState().get('players')
-            .find(p => p.get('name') === focusedPlayer)
-
         const getRosterId = playerName => telemetry.finalState().get('players')
             .find(p => p.get('name') === focusedPlayer)
             .get('rosterId')
@@ -237,7 +234,7 @@ class Match extends React.Component {
                                 <BattleLog
                                     id="BattleLog"
                                     telemetry={currentTelemetry}
-                                    player={currentPlayer} 
+                                    focusedPlayer={focusedPlayer}
                                 />
                             </Wrapper>
                         }
