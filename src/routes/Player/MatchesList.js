@@ -38,9 +38,8 @@ const MatchesTable = ({ baseUrl, matches }) => {
     if (isEmpty(matches)) {
         return <NoMatches>No matches found</NoMatches>
     }
-
+    console.log(matches)
     const byDate = groupBy(matches, m => moment(m.playedAt).format('MMM Do'))
-
     return (
         <StyledTable>
             <tbody>

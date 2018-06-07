@@ -62,7 +62,6 @@ class Player extends React.Component {
                 </PlayerHeader>
             )
         }
-
         const forGameMode = gameMode => player.matches.filter(m => m.gameMode.includes(gameMode))
 
         const fetchedMinAgo = moment.utc().diff(moment.utc(player.lastFetchedAt), 'minutes')

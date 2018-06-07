@@ -30,7 +30,6 @@ const Interaction = styled.li`
 const getItemAsset = item => require(`../../../assets/${item}.png`) // eslint-disable-line
 
 const BattleLog = ({ telemetry, focusedPlayer }) => {
-    console.log(focusedPlayer)
     const player = telemetry.get('players').find(p => p.get('name') === focusedPlayer)
     return (
         <DeathLogWrapper>
@@ -49,6 +48,8 @@ const BattleLog = ({ telemetry, focusedPlayer }) => {
                     <Interaction>
                         {p.getIn(['attacker', 'name'])}&nbsp;
                         hit {p.getIn(['victim', 'name'])}&nbsp;
+                        in {p.get('damageReason')}&nbsp;
+                        by {p.get('damageTypeCategory')}&nbsp;
                         for {p.get('damage')} damage&nbsp;
                         with {p.get('damageCauserName')}
                     </Interaction>

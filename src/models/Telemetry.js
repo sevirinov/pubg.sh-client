@@ -62,6 +62,11 @@ export default function Telemetry(matchData, telemetry, focusedPlayerName) {
                     const killer = s.getIn(killerPath)
                     s.setIn(killerPath, killer.set('kills', killer.get('kills') + 1))
                 }
+                if ((d.killer.name === focusedPlayerName || d.victim.name === focusedPlayerName)
+                    && d.damage !== 0) {
+                    s.update('playerInteractions', interactions =>
+                        interactions.push(Map({ ...d })))
+                }
             })
         }
 
